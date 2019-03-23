@@ -1,6 +1,7 @@
 #include "trigram_file.h"
 #include "QFile"
 #include "QTextStream"
+#include "QThread"
 trigram_file::trigram_file() {
     this->file_path = QVariant(QString());
 }
@@ -14,15 +15,20 @@ QSet<qint64>& trigram_file::get_set_trigrams() {
     return this->set_trigrams;
 }
 
-void trigram_file::process_trigram(const QString &data) {
-    if (data.size() < 3) {
+void trigram_file::process_trigram(const QString &data2) {
+    auto data = data2.data();
+    if (data2.size() < 3) {
         return;
     }
-    qint64 trigram = (qint64(data[2].unicode()) << 48) + (qint64(data[1].unicode()) << 32) + (qint64(data[0].unicode()) << 16);
-    for (int i = 3; i < data.size(); i++) {
+    qint64 trigram = (qint64(data[2].unicode()) << 32) + (qint64(data[1].unicode()) << 16) + (qint64(data[0].unicode()));
+    for (int i = 3; i < data2.size(); i++) {
+        if (QThread::currentThread()->isInterruptionRequested()) {
+          //  std::cerr << "NOOOO";
+            return;
+        }
         set_trigrams.insert(trigram);
         if (set_trigrams.size() > MAX_TRIGRAMS) return;
-        trigram = (trigram >> 16) + (qint64(data[i].unicode()) << 48);
+        trigram = (trigram >> 16) + (qint64(data[i].unicode()) << 32);
     }
 }
 
@@ -33,6 +39,10 @@ void trigram_file::update() {
         QTextStream in(&file);
         QString buffer;
         while (buffer.append(in.read(MAX_BUFFER)).size() >= 3) {
+            if (QThread::currentThread()->isInterruptionRequested()) {
+              //  std::cerr << "NOOOO";
+                return;
+            }
            process_trigram(buffer);
            if (set_trigrams.size() > MAX_TRIGRAMS) {
                file.close();

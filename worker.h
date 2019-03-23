@@ -14,14 +14,14 @@ class worker : public QObject {
 public:
     worker();
     worker(QString const& directory);
-    worker(worker& c_worker);
+  //  worker(worker& c_worker);
     ~worker();
 
     QVariant directory;
 public slots:
     void take_control();
     void find_substring(QString const& pattern);
-    void update_indexed_file(QString const& file_path);
+  //  void update_indexed_file(QString const& file_path);
     void initiate(QString const& directory);
 signals:
     void send_position(QString const& file_path, qint64 index);

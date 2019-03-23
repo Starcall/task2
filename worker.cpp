@@ -55,13 +55,13 @@ void worker::take_control() {
         //std::cerr << i.get_file_path().toString().toStdString() << std::endl;
         indexed_directory.push_back(i);
     }
-    std::cerr << cnt << std::endl;
+  //  std::cerr << cnt << std::endl;
   //  std::cerr << "IAMDIYING" << std::endl;
     emit send_status(100);
    // std::cerr << "Point 3.1 passed\n";
     emit indexing_finished();
    // std::cerr << "Point 3.2 passed\n";
-    std::cerr << QThread::currentThread()->isRunning() << std::endl;
+    //std::cerr << QThread::currentThread()->isRunning() << std::endl;
 }
 
 void worker::find_substring(QString const& pattern) {
@@ -79,6 +79,10 @@ void worker::find_substring(QString const& pattern) {
             return;
         }
         qint64 pos = -1;
+        //for (auto j : helper.get_set_trigrams()) {
+         //   std::cerr << j << " ";
+        //}
+       // std::cerr << std::endl << std::endl;
         if (i.get_set_trigrams().contains(helper.get_set_trigrams()) && ((pos = ensure(i.get_file_path().toString(), pattern)) != -1)) {
             emit send_position(i.get_file_path().toString(), pos);
         }
@@ -90,12 +94,15 @@ void worker::find_substring(QString const& pattern) {
 
 qint64 worker::ensure(const QString &file_path, const QString &pattern) {
     QFile fileinfo(file_path);
+
+    //std::cerr << file_path.toStdString() << " " << std::endl << pattern.toStdString() << std::endl;
     if(!fileinfo.open(QIODevice::ReadOnly | QIODevice::Text)) {
         //fileinfo.close();
         return false;
     }
     QTextStream in(&fileinfo);
     QString buffer;
+    //std::cerr << file_path.toStdString() << " " << std::endl << pattern.toStdString() << std::endl;
     while (buffer.append(in.read(MAX_BUFFER)).size() >= pattern.size()) {
         qint64 pos = buffer.indexOf(pattern);
         if (pos != -1) {
@@ -108,9 +115,9 @@ qint64 worker::ensure(const QString &file_path, const QString &pattern) {
     return -1;
 }
 
-void worker::update_indexed_file(QString const& file_path) {
+//void worker::update_indexed_file(QString const& file_path) {
 
-}
+//}
 
 
 

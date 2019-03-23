@@ -18,7 +18,10 @@ main_window::main_window(QWidget *parent)
 
     ui->treeWidget->header()->setSectionResizeMode(0, QHeaderView::Stretch);
     ui->treeWidget->header()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-
+  //  ui->treeWidget->
+    ui->treeWidget->setUniformRowHeights(true);
+    this->setMinimumSize(QSize(300, 50));
+    this->setMaximumSize(QSize(300000, 500000));
     QCommonStyle style;
     ui->actionScan_Directory->setIcon(style.standardIcon(QCommonStyle::SP_DialogOpenButton));
     ui->actionExit->setIcon(style.standardIcon(QCommonStyle::SP_DialogCloseButton));
@@ -46,7 +49,7 @@ main_window::main_window(QWidget *parent)
 main_window::~main_window()
 {
     //std::cerr << "COLLAPSE!" << std::endl;
-
+    stop();
     thread->quit();
     thread->wait();
     delete thread;
